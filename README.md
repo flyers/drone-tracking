@@ -24,7 +24,22 @@ If you are using this code in a publication, please cite our paper.
 
 For the installation of specific trackers, please refer to the corresponding documentation.
 
+### Download dataset
+Download the dataset from the this [link](https://www.dropbox.com/s/s1fj99s2six4lrs/DTB70.tar.gz?dl=0).
+Put the unzipped file under the *data* directory.
+Also, change the dataset path config in file *experiments/util/configDTBSeqs.m*.
 
-### How to Install
+The dataset format follows [OTB50](http://cvlab.hanyang.ac.kr/tracker_benchmark/index.html).
 
-### Run Examples
+### How to install individual trackers
+* DAT tracker is ready to run.
+* DSST, HOG_LR, KCF, MEEM, SRDCF all need to compile mex files. Just use the compilation script in the corresponding directories.
+* SODLT and MDNet are deep learning based trackers. Please refer to the detailed documentation.
+
+### Run demo examples
+Run the *run_demo.m* script.
+
+### Run evaluation toolkit
+Run the *main_running.m* script under the *experiments* directory. You can config the trackers list in file *experiments/util/configTrackers.m*.
+
+For any problems, feel free to propose issues or contact the author sliay@cse.ust.hk.
