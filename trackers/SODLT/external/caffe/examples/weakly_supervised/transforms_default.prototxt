@@ -1,0 +1,7 @@
+transformtype{
+	mirror:false
+	pos:"middle"
+	side:"middle"
+	size:224
+}
+

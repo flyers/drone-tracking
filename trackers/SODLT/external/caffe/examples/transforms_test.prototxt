@@ -1,0 +1,46 @@
+transformtype{
+	size:256
+	side:"left"
+	mirror:true
+}
+transformtype{
+        size:256
+        side:"left"
+        mirror:false
+}
+transformtype{
+        size:256
+        side:"middle"
+        mirror:true
+}
+transformtype{
+        size:256
+        side:"middle"
+        mirror:false
+}
+transformtype{
+        size:256
+        side:"right"
+        mirror:true
+}
+transformtype{
+        size:256
+        side:"right"
+        mirror:false
+}
+transformtype{
+        size:224
+        side:"left"
+        pos:"leftup"
+        mirror:true
+}
+transformtype{
+        size:224
+        side:"left"
+        pos:"leftup"
+        mirror:false
+}
+
+
+
+

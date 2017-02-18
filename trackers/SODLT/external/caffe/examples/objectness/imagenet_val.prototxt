@@ -1,0 +1,446 @@
+name: "Objectness"
+layers {
+  layer {
+    name: "data"
+    type: "window_data"
+    source: "/media/windisk/imagenet-DET/window_file_val2.txt"
+    meanvalue: 120
+    batchsize: 128
+    output_size: 100
+    context_pad_scale: 1
+    crop_mode: "warp"
+    fg_threshold: 0.9
+    bg_threshold: 0.1
+    fg_fraction: 0.5
+    random_augment: true
+    output_scale: 2
+  }
+  top: "data"
+  top: "label"
+  top: "box"
+}
+
+layers {
+  layer {
+    name: "conv1"
+    type: "conv"
+    num_output: 64
+    kernelsize: 5
+    stride: 2
+    multiply_batch: 8
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.
+    }
+    blobs_lr: 1.
+    blobs_lr: 2.
+    weight_decay: 1.
+    weight_decay: 0.
+  }
+  bottom: "data"
+  top: "conv1"
+}
+
+layers {
+  layer {
+    name: "relu1"
+    type: "relu"
+  }
+  bottom: "conv1"
+  top: "conv1"
+}
+layers {
+  layer {
+    name: "pool1"
+    type: "pool"
+    pool: MAX
+    poolsize: 3
+    poolstride: 3
+  }
+  bottom: "conv1"
+  top: "pool1"
+}
+
+layers {
+  layer {
+    name: "norm1"
+    type: "lrn"
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+  bottom: "pool1"
+  top: "norm1"
+}
+layers {
+  layer {
+    name: "conv2"
+    type: "conv"
+    num_output: 192
+    kernelsize: 3
+    pad: 1
+    stride: 1
+    multiply_batch: 8
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1.
+    }
+    blobs_lr: 1.
+    blobs_lr: 2.
+    weight_decay: 1.
+    weight_decay: 0.
+  }
+  bottom: "norm1"
+  top: "conv2"
+}
+
+layers {
+  layer {
+    name: "relu2"
+    type: "relu"
+  }
+  bottom: "conv2"
+  top: "conv2"
+}
+
+layers {
+  layer {
+    name: "conv3"
+    type: "conv"
+    num_output: 384
+    kernelsize: 3
+    pad: 1
+    stride: 1
+    multiply_batch: 8
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1.
+    }
+    blobs_lr: 1.
+    blobs_lr: 2.
+    weight_decay: 1.
+    weight_decay: 0.
+  }
+  bottom: "conv2"
+  top: "conv3"
+}
+
+layers {
+  layer {
+    name: "relu3"
+    type: "relu"
+  }
+  bottom: "conv3"
+  top: "conv3"
+}
+
+layers {
+  layer {
+    name: "conv4"
+    type: "conv"
+    num_output: 384
+    kernelsize: 3
+    pad: 1
+    stride: 1
+    multiply_batch: 8
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1.
+    }
+    blobs_lr: 1.
+    blobs_lr: 2.
+    weight_decay: 1.
+    weight_decay: 0.
+  }
+  bottom: "conv3"
+  top: "conv4"
+}
+
+layers {
+  layer {
+    name: "relu4"
+    type: "relu"
+  }
+  bottom: "conv4"
+  top: "conv4"
+}
+
+layers {
+  layer {
+    name: "conv5"
+    type: "conv"
+    num_output: 384
+    kernelsize: 3
+    pad: 1
+    stride: 1
+    multiply_batch: 8
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1.
+    }
+    blobs_lr: 1.
+    blobs_lr: 2.
+    weight_decay: 1.
+    weight_decay: 0.
+  }
+  bottom: "conv4"
+  top: "conv5"
+}
+
+layers {
+  layer {
+    name: "relu5"
+    type: "relu"
+  }
+  bottom: "conv5"
+  top: "conv5"
+}
+
+layers {
+  layer {
+    name: "conv6"
+    type: "conv"
+    num_output: 384
+    kernelsize: 3
+    pad: 1
+    stride: 1
+    multiply_batch: 8
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1.
+    }
+    blobs_lr: 1.
+    blobs_lr: 2.
+    weight_decay: 1.
+    weight_decay: 0.
+  }
+  bottom: "conv5"
+  top: "conv6"
+}
+
+layers {
+  layer {
+    name: "relu6"
+    type: "relu"
+  }
+  bottom: "conv6"
+  top: "conv6"
+}
+
+layers {
+  layer {
+    name: "conv7"
+    type: "conv"
+    num_output: 256
+    kernelsize: 3
+    pad: 1
+    stride: 1
+    multiply_batch: 8
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1.
+    }
+    blobs_lr: 1.
+    blobs_lr: 2.
+    weight_decay: 1.
+    weight_decay: 0.
+  }
+  bottom: "conv6"
+  top: "conv7"
+}
+
+layers {
+  layer {
+    name: "relu7"
+    type: "relu"
+  }
+  bottom: "conv7"
+  top: "conv7"
+}
+
+layers {
+  layer {
+    name: "pool8"
+    type: "pool"
+    poolsize: 2
+    poolstride: 2
+    poolsize: 4
+    poolstride: 4
+    poolsize: 8
+    poolstride: 8
+    poolsize: 16
+    poolstride: 16
+    pool: MAX
+  }
+  bottom: "conv7"
+  top: "pool8.1"
+  top: "pool8.2"
+  top: "pool8.3"
+  top: "pool8.4"
+}
+
+layers{
+  layer{
+    name: "flatten1"
+    type: "flatten"
+  }
+  bottom: "pool8.1"
+  top: "flatten1"
+}
+
+layers{
+  layer{
+    name: "flatten2"
+    type: "flatten"
+  }
+  bottom: "pool8.2"
+  top: "flatten2"
+}
+
+layers{
+  layer{
+    name: "flatten3"
+    type: "flatten"
+  }
+  bottom: "pool8.3"
+  top: "flatten3"
+}
+layers{
+  layer{
+    name: "flatten4"
+    type: "flatten"
+  }
+  bottom: "pool8.4"
+  top: "flatten4"
+}
+layers{
+  layer{
+    name: "concat1"
+    type: "concat"
+    concat_dim: 1
+  }
+  bottom: "flatten1"
+  bottom: "flatten2"
+  bottom: "flatten3"
+  bottom: "flatten4"
+  top: "merge"
+}
+
+layers {
+  layer {
+    name: "fc9"
+    type: "innerproduct"
+    num_output: 1024
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1.
+    }
+    blobs_lr: 1.
+    blobs_lr: 2.
+    weight_decay: 1.
+    weight_decay: 0.
+  }
+  bottom: "merge"
+  top: "fc9"
+}
+layers {
+  layer {
+    name: "relu9"
+    type: "relu"
+  }
+  bottom: "fc9"
+  top: "fc9"
+}
+layers {
+  layer {
+    name: "drop9"
+    type: "dropout"
+    dropout_ratio: 0.5
+  }
+  bottom: "fc9"
+  top: "fc9"
+}
+
+layers {
+  layer {
+    name: "fc10"
+    type: "innerproduct"
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1.
+    }
+    blobs_lr: 1.
+    blobs_lr: 2.
+    weight_decay: 1.
+    weight_decay: 0.
+  }
+  bottom: "fc9"
+  top: "fc10"
+}
+
+layers {
+  layer {
+    name: "relu10"
+    type: "relu"
+  }
+  bottom: "fc10"
+  top: "fc10"
+}
+
+layers {
+  layer {
+    name: "fc11"
+    type: "innerproduct"
+    num_output: 2500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 1.
+    }
+    blobs_lr: 1.
+    blobs_lr: 2.
+    weight_decay: 1.
+    weight_decay: 0.
+  }
+  bottom: "fc10"
+  top: "fc11"
+}
+
+layers {
+	layer {
+		name: "loss"
+		type: "so_output_loss"
+	}
+	bottom: "fc11"
+	bottom: "box"
+}

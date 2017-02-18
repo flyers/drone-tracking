@@ -1,0 +1,43 @@
+side_len:256
+transformtype{
+	mirror:false
+	pos:"middle"
+	side:"middle"
+	size:224
+}
+transformtype{
+	mirror:false
+	pos:"middle"
+	side:"middle"
+	size:224
+  blur_range: 5
+  blur_sigma: 10
+}
+transformtype{
+	mirror:false
+	pos:"middle"
+	side:"middle"
+	size:224
+  blur_range: 5
+  blur_sigma: 20
+}
+
+
+transformtype{
+	mirror:false
+	pos:"middle"
+	side:"middle"
+	size:224
+  blur_range: 5
+  blur_sigma: 30
+}
+
+transformtype{
+	mirror:false
+	pos:"middle"
+	side:"middle"
+	size:224
+  blur_range: 7
+  blur_sigma: 40
+}
+

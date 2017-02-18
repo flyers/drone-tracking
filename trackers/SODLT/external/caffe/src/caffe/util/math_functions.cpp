@@ -1,0 +1,373 @@
+// Copyright 2013 Yangqing Jia
+
+#include <mkl.h>
+#include <cublas_v2.h>
+#include "caffe/common.hpp"
+#include "caffe/util/math_functions.hpp"
+
+namespace caffe {
+
+template<>
+void caffe_matrix_transpose<float>(const float* source, float* des, int m, int n, int id ){
+    float const alpha(1.0);
+    float const beta(0.0);
+    cublasSgeam(Caffe::cublas_handle(id), CUBLAS_OP_T, CUBLAS_OP_N, m, n, &alpha, source, n, 
+          &beta, source, m, des, m );
+}
+
+template<>
+void caffe_matrix_transpose<double>(const double* source, double* des, int m, int n, int id){
+    double const alpha(1.0);
+    double const beta(0.0);
+    cublasDgeam(Caffe::cublas_handle(id), CUBLAS_OP_T, CUBLAS_OP_N, m, n, &alpha, source, n, 
+          &beta, source, m, des, m );
+}
+
+template<>
+void caffe_cpu_gemm<float>(const CBLAS_TRANSPOSE TransA,
+    const CBLAS_TRANSPOSE TransB, const int M, const int N, const int K,
+    const float alpha, const float* A, const float* B, const float beta,
+    float* C) {
+  int lda = (TransA == CblasNoTrans) ? K : M;
+  int ldb = (TransB == CblasNoTrans) ? N : K;
+  cblas_sgemm(CblasRowMajor, TransA, TransB, M, N, K, alpha, A, lda, B,
+      ldb, beta, C, N);
+}
+
+template<>
+void caffe_cpu_gemm<double>(const CBLAS_TRANSPOSE TransA,
+    const CBLAS_TRANSPOSE TransB, const int M, const int N, const int K,
+    const double alpha, const double* A, const double* B, const double beta,
+    double* C) {
+  int lda = (TransA == CblasNoTrans) ? K : M;
+  int ldb = (TransB == CblasNoTrans) ? N : K;
+  cblas_dgemm(CblasRowMajor, TransA, TransB, M, N, K, alpha, A, lda, B,
+      ldb, beta, C, N);
+}
+
+template <>
+void caffe_gpu_gemm<float>(const CBLAS_TRANSPOSE TransA,
+    const CBLAS_TRANSPOSE TransB, const int M, const int N, const int K,
+    const float alpha, const float* A, const float* B, const float beta,
+    float* C, int id) {
+  // Note that cublas follows fortran order.
+  int lda = (TransA == CblasNoTrans) ? K : M;
+  int ldb = (TransB == CblasNoTrans) ? N : K;
+  cublasOperation_t cuTransA =
+      (TransA == CblasNoTrans) ? CUBLAS_OP_N : CUBLAS_OP_T;
+  cublasOperation_t cuTransB =
+      (TransB == CblasNoTrans) ? CUBLAS_OP_N : CUBLAS_OP_T;
+  CUBLAS_CHECK(cublasSgemm(Caffe::cublas_handle(id), cuTransB, cuTransA,
+      N, M, K, &alpha, B, ldb, A, lda, &beta, C, N));
+}
+
+template <>
+void caffe_gpu_gemm<double>(const CBLAS_TRANSPOSE TransA,
+    const CBLAS_TRANSPOSE TransB, const int M, const int N, const int K,
+    const double alpha, const double* A, const double* B, const double beta,
+    double* C, int id) {
+  // Note that cublas follows fortran order.
+  int lda = (TransA == CblasNoTrans) ? K : M;
+  int ldb = (TransB == CblasNoTrans) ? N : K;
+  cublasOperation_t cuTransA =
+      (TransA == CblasNoTrans) ? CUBLAS_OP_N : CUBLAS_OP_T;
+  cublasOperation_t cuTransB =
+      (TransB == CblasNoTrans) ? CUBLAS_OP_N : CUBLAS_OP_T;
+  CUBLAS_CHECK(cublasDgemm(Caffe::cublas_handle(id), cuTransB, cuTransA,
+      N, M, K, &alpha, B, ldb, A, lda, &beta, C, N));
+}
+
+template <>
+void caffe_cpu_gemv<float>(const CBLAS_TRANSPOSE TransA, const int M,
+    const int N, const float alpha, const float* A, const float* x,
+    const float beta, float* y) {
+  cblas_sgemv(CblasRowMajor, TransA, M, N, alpha, A, N, x, 1, beta, y, 1);
+}
+
+template <>
+void caffe_cpu_gemv<double>(const CBLAS_TRANSPOSE TransA, const int M,
+    const int N, const double alpha, const double* A, const double* x,
+    const double beta, double* y) {
+  cblas_dgemv(CblasRowMajor, TransA, M, N, alpha, A, N, x, 1, beta, y, 1);
+}
+
+template <>
+void caffe_gpu_gemv<float>(const CBLAS_TRANSPOSE TransA, const int M,
+    const int N, const float alpha, const float* A, const float* x,
+    const float beta, float* y, int id) {
+  cublasOperation_t cuTransA =
+      (TransA == CblasNoTrans) ? CUBLAS_OP_T : CUBLAS_OP_N;
+  CUBLAS_CHECK(cublasSgemv(Caffe::cublas_handle(id), cuTransA, N, M, &alpha,
+      A, N, x, 1, &beta, y, 1));
+}
+
+template <>
+void caffe_gpu_gemv<double>(const CBLAS_TRANSPOSE TransA, const int M,
+    const int N, const double alpha, const double* A, const double* x,
+    const double beta, double* y, int id) {
+  cublasOperation_t cuTransA =
+      (TransA == CblasNoTrans) ? CUBLAS_OP_T : CUBLAS_OP_N;
+  CUBLAS_CHECK(cublasDgemv(Caffe::cublas_handle(id), cuTransA, N, M, &alpha,
+      A, N, x, 1, &beta, y, 1));
+}
+
+template <>
+void caffe_axpy<float>(const int N, const float alpha, const float* X,
+    float* Y) { cblas_saxpy(N, alpha, X, 1, Y, 1); }
+
+template <>
+void caffe_axpy<double>(const int N, const double alpha, const double* X,
+    double* Y) { cblas_daxpy(N, alpha, X, 1, Y, 1); }
+
+template <>
+void caffe_axpy<int>(const int N, const int alpha, const int* X,
+    int* Y) { 
+  LOG(FATAL) << "axpy for int is not implemented.";
+}
+
+template <>
+void caffe_gpu_axpy<float>(const int N, const float alpha, const float* X,
+    float* Y, int id) {
+  CUBLAS_CHECK(cublasSaxpy(Caffe::cublas_handle(id), N, &alpha, X, 1, Y, 1));
+}
+
+template <>
+void caffe_gpu_axpy<double>(const int N, const double alpha, const double* X,
+    double* Y, int id) {
+  CUBLAS_CHECK(cublasDaxpy(Caffe::cublas_handle(id), N, &alpha, X, 1, Y, 1));
+}
+template <>
+void caffe_gpu_axpy<int>(const int N, const int alpha, const int* X,
+    int* Y, int id) {
+  LOG(FATAL) << "axpy for int is not implemented.";
+}
+template <>
+void caffe_axpby<float>(const int N, const float alpha, const float* X,
+    const float beta, float* Y) {
+  cblas_saxpby(N, alpha, X, 1, beta, Y, 1);
+}
+
+template <>
+void caffe_axpby<double>(const int N, const double alpha, const double* X,
+    const double beta, double* Y) {
+  cblas_daxpby(N, alpha, X, 1, beta, Y, 1);
+}
+
+template <typename Dtype>
+void caffe_copy(const int N, const Dtype* X, Dtype* Y) {
+  if (X != Y) {
+    if (Caffe::mode() == Caffe::GPU) {
+      CUDA_CHECK(cudaMemcpy(Y, X, sizeof(Dtype) * N, cudaMemcpyDefault));
+    } else {
+      memcpy(Y, X, sizeof(Dtype) * N);
+    }
+  }
+}
+
+template void caffe_copy<int>(const int N, const int* X, int* Y);
+template void caffe_copy<unsigned int>(const int N, const unsigned int* X,
+    unsigned int* Y);
+template void caffe_copy<float>(const int N, const float* X, float* Y);
+template void caffe_copy<double>(const int N, const double* X, double* Y);
+
+template <>
+void caffe_scal<float>(const int N, const float alpha, float *X) {
+  cblas_sscal(N, alpha, X, 1);
+}
+
+template <>
+void caffe_scal<double>(const int N, const double alpha, double *X) {
+  cblas_dscal(N, alpha, X, 1);
+}
+
+template <>
+void caffe_gpu_scal<float>(const int N, const float alpha, float *X, int id) {
+  CUBLAS_CHECK(cublasSscal(Caffe::cublas_handle(id), N, &alpha, X, 1));
+}
+
+template <>
+void caffe_gpu_scal<double>(const int N, const double alpha, double *X, int id) {
+  CUBLAS_CHECK(cublasDscal(Caffe::cublas_handle(id), N, &alpha, X, 1));
+}
+
+template <>
+void caffe_gpu_axpby<float>(const int N, const float alpha, const float* X,
+    const float beta, float* Y, int id) {
+  caffe_gpu_scal<float>(N, beta, Y, id);
+  caffe_gpu_axpy<float>(N, alpha, X, Y, id);
+}
+
+template <>
+void caffe_gpu_axpby<double>(const int N, const double alpha, const double* X,
+    const double beta, double* Y, int id ) {
+  caffe_gpu_scal<double>(N, beta, Y, id);
+  caffe_gpu_axpy<double>(N, alpha, X, Y, id);
+}
+
+template <>
+void caffe_sqr<float>(const int n, const float* a, float* y) {
+  vsSqr(n, a, y);
+}
+
+template <>
+void caffe_sqr<double>(const int n, const double* a, double* y) {
+  vdSqr(n, a, y);
+}
+
+template <>
+void caffe_add<float>(const int n, const float* a, const float* b,
+    float* y) { vsAdd(n, a, b, y); }
+
+template <>
+void caffe_add<double>(const int n, const double* a, const double* b,
+    double* y) { vdAdd(n, a, b, y); }
+
+template <>
+void caffe_sub<float>(const int n, const float* a, const float* b,
+    float* y) { vsSub(n, a, b, y); }
+
+template <>
+void caffe_sub<double>(const int n, const double* a, const double* b,
+    double* y) { vdSub(n, a, b, y); }
+
+template <>
+void caffe_mul<float>(const int n, const float* a, const float* b,
+    float* y) { vsMul(n, a, b, y); }
+
+template <>
+void caffe_mul<double>(const int n, const double* a, const double* b,
+    double* y) { vdMul(n, a, b, y); }
+
+template <>
+void caffe_div<float>(const int n, const float* a, const float* b,
+    float* y) { vsDiv(n, a, b, y); }
+
+template <>
+void caffe_div<double>(const int n, const double* a, const double* b,
+    double* y) { vdDiv(n, a, b, y); }
+
+template <>
+void caffe_powx<float>(const int n, const float* a, const float b,
+    float* y) { vsPowx(n, a, b, y); }
+
+template <>
+void caffe_powx<double>(const int n, const double* a, const double b,
+    double* y) { vdPowx(n, a, b, y); }
+
+template <>
+float caffe_cpu_asum<float>(const int n, const float* x) {
+  return cblas_sasum(n, x, 1);
+}
+
+template <>
+double caffe_cpu_asum<double>(const int n, const double* x) {
+  return cblas_dasum(n, x, 1);
+}
+
+template <>
+void caffe_gpu_asum<float>(const int n, const float* x, float* y) {
+  CUBLAS_CHECK(cublasSasum(Caffe::cublas_handle(), n, x, 1, y));
+}
+
+template <>
+void caffe_gpu_asum<double>(const int n, const double* x, double* y) {
+  CUBLAS_CHECK(cublasDasum(Caffe::cublas_handle(), n, x, 1, y));
+}
+
+template <>
+void caffe_vRngUniform<float>(const int n, float* r,
+    const float a, const float b) {
+  VSL_CHECK(vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD, Caffe::vsl_stream(),
+      n, r, a, b));
+}
+
+template <>
+void caffe_vRngUniform<double>(const int n, double* r,
+    const double a, const double b) {
+  VSL_CHECK(vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, Caffe::vsl_stream(),
+      n, r, a, b));
+}
+
+template <>
+void caffe_vRngGaussian<float>(const int n, float* r, const float a,
+    const float sigma) {
+  VSL_CHECK(vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER,
+      Caffe::vsl_stream(), n, r, a, sigma));
+}
+
+
+template <>
+void caffe_vRngGaussian<double>(const int n, double* r, const double a,
+    const double sigma) {
+  VSL_CHECK(vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER,
+      Caffe::vsl_stream(), n, r, a, sigma));
+}
+
+template <>
+void caffe_exp<float>(const int n, const float* a, float* y) {
+  vsExp(n, a, y);
+}
+
+template <>
+void caffe_exp<double>(const int n, const double* a, double* y) {
+  vdExp(n, a, y);
+}
+
+template <>
+float caffe_cpu_dot<float>(const int n, const float* x, const float* y) {
+  return cblas_sdot(n, x, 1, y, 1);
+}
+
+template <>
+double caffe_cpu_dot<double>(const int n, const double* x, const double* y) {
+  return cblas_ddot(n, x, 1, y, 1);
+}
+
+template <>
+void caffe_gpu_dot<float>(const int n, const float* x, const float* y,
+    float* out, int id) {
+  CUBLAS_CHECK(cublasSdot(Caffe::cublas_handle(id), n, x, 1, y, 1, out));
+}
+
+template <>
+void caffe_gpu_dot<double>(const int n, const double* x, const double* y,
+    double * out, int id) {
+  CUBLAS_CHECK(cublasDdot(Caffe::cublas_handle(id), n, x, 1, y, 1, out));
+}
+
+template <>
+void caffe_gpu_l2norm<double>(const int n, const double* x, double* out, int id){
+  CUBLAS_CHECK(cublasDnrm2(Caffe::cublas_handle(id), n, x, 1, out));  
+}
+
+template <>
+void caffe_gpu_l2norm<float>(const int n, const float* x, float* out, int id){
+  CUBLAS_CHECK(cublasSnrm2(Caffe::cublas_handle(id), n, x, 1, out));  
+}
+
+template <>
+void caffe_gpu_rand_uniform<float>(const int n, float* r){
+  CURAND_CHECK(curandGenerateUniform(Caffe::curand_generator(), r, n));
+}
+
+template <>
+void caffe_gpu_rand_uniform<double>(const int n, double* r){
+  CURAND_CHECK(curandGenerateUniformDouble(Caffe::curand_generator(), r, n));
+}
+
+template <typename Dtype>
+void caffe_set(const int N, const Dtype alpha, Dtype* Y) {
+  if (alpha == 0) {
+    memset(Y, 0, sizeof(Dtype) * N);
+    return;
+  }
+  for (int i = 0; i < N; ++i) {
+    Y[i] = alpha;
+  }
+}
+
+template void caffe_set<int>(const int N, const int alpha, int* Y);
+template void caffe_set<float>(const int N, const float alpha, float* Y);
+template void caffe_set<double>(const int N, const double alpha, double* Y);
+
+}  // namespace caffe

@@ -1,0 +1,7 @@
+image_augmentation{
+	mirror:false
+	pos:"middle"
+	side:"middle"
+	resolve_size:224
+}
+

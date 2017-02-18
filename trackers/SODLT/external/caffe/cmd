@@ -1,0 +1,1 @@
+GLOG_logtostderr=1 ./build/examples/convert_imageset.bin  /data/nwangab/  python/caffe/imagenet/ilsvrc_2012_train.txt  ./data/imagenet-train-leveldb 1

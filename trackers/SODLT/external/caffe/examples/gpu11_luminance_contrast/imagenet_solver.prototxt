@@ -1,0 +1,16 @@
+train_net: "examples/gpu11_luminance_contrast/imagenet.prototxt"
+test_net: "examples/gpu11_luminance_contrast/imagenet_val.prototxt"
+test_iter: 500
+test_interval: 2000
+base_lr: 0.00001
+lr_policy: "nesterov"
+gamma: 0.00002
+power: 1.5
+display: 20
+max_iter: 800000
+max_momentum: 0.9
+momentum_batch: 10000
+double_batch: 150000
+weight_decay: 0.0005
+snapshot: 10000
+snapshot_prefix: "/data/nwangab/imagenet_snapshot/caffe_imagenet_train"

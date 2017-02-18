@@ -1,0 +1,66 @@
+name: "MidLevelNet"
+layers {
+  layer{
+    name: "data"
+    type: "hdf5_data"
+    source: "/home/ashrivas/current/nthorder/imagenet/heatmaps/data/train_8x8_03scales_2000/list.txt"
+    batch_size: 128
+  }
+  top: "data"
+  top: "label"
+}
+
+layers {
+  layer {
+    name: "conv1"
+    type: "conv"
+    num_output: 512
+    kernelsize: 3
+    pad: 1
+    multiply_batch: 8
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.
+    }
+    blobs_lr: 1.
+    blobs_lr: 2.
+    weight_decay: 1.
+    weight_decay: 0.
+  }
+  bottom: "data"
+  top: "conv1"
+}
+
+layers {
+  layer {
+    name: "fc2"
+    type: "innerproduct"
+    num_output: 1000
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.
+    }
+    blobs_lr: 1.
+    blobs_lr: 2.
+    weight_decay: 1.
+    weight_decay: 0.
+  }
+  bottom: "conv1"
+  top: "fc2"
+}
+
+layers {
+  layer {
+    name: "loss"
+    type: "softmax_loss"
+  }
+  bottom: "fc2"
+  bottom: "label"
+}
+

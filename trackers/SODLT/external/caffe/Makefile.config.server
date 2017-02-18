@@ -1,0 +1,39 @@
+# CUDA directory contains bin/ and lib/ directories that we need.
+CUDA_DIR := /usr/local/cuda
+
+# CUDA architecture setting.
+CUDA_ARCH := -gencode arch=compute_20,code=sm_20 \
+    -gencode arch=compute_20,code=sm_21 \
+    -gencode arch=compute_30,code=sm_30 \
+    -gencode arch=compute_35,code=sm_35
+
+# MKL directory contains include/ and lib/ directions that we need.
+MKL_DIR := /data/nwangab/composer_xe_2013_sp1.1.106/mkl
+
+# NOTE: this is required only if you will compile the matlab interface.
+# MATLAB directory should contain the mex binary in /bin
+MATLAB_DIR := /usr/local
+
+# NOTE: this is required only if you will compile the python interface.
+# We need to be able to find Python.h and numpy/arrayobject.h.
+PYTHON_INCLUDES := /usr/include/python2.7 \
+    /usr/local/lib/python2.7/dist-packages/numpy/core/include
+# We need to be able to find libpythonX.X.so or .dylib.
+PYTHON_LIB := /usr/local/lib
+
+# Whatever else you find you need goes here.
+INCLUDE_DIRS := $(PYTHON_INCLUDES) /home/nwangab/opencv/opencv-2.4.8/modules/imgproc/include/  \
+	/home/nwangab/opencv/opencv-2.4.8/modules/highgui/include/  /home/nwangab/opencv/opencv-2.4.8/modules/core/include/  \
+	/home/nwangab/leveldb/leveldb-1.7.0/include /home/nwangab/protobuf/include /usr/local/include /data/usr/local/include  \
+	/usr/local/include /data/nwangab/glog/include /data/nwangab/composer_xe_2013_sp1/mkl/include
+LIBRARY_DIRS := $(PYTHON_LIB)  /home/nwangab/leveldb/leveldb-1.7.0  /home/nwangab/protobuf/lib /usr/lib /usr/local/lib \
+	/data/nwangab/glog/lib /data/nwangab/composer_xe_2013_sp1/lib  /data/usr/local/lib /home/nwangab/snappy/lib \
+	/home/nwangab/opencv/opencv-2.4.8/lib
+
+# For OS X, use clang++.
+CXX := /usr/bin/g++
+# For OS X 10.9, use libstdc++ instead of libc++ for CUDA compatibility.
+#CXXFLAGS := -stdlib=libstdc++
+
+BUILD_DIR := build
+DISTRIBUTE_DIR := distribute

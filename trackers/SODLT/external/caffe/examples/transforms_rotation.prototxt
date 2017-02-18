@@ -1,0 +1,33 @@
+side_len:256
+transformtype{
+	mirror:false
+	pos:"middle"
+	side:"middle"
+	size:224
+  rotation: 0
+}
+transformtype{
+	mirror:false
+	pos:"middle"
+	side:"middle"
+	size:224
+  rotation: 90
+}
+
+
+transformtype{
+	mirror:false
+	pos:"middle"
+	side:"middle"
+	size:224
+  rotation: 180
+}
+
+transformtype{
+	mirror:false
+	pos:"middle"
+	side:"middle"
+	size:224
+  rotation: 270
+}
+

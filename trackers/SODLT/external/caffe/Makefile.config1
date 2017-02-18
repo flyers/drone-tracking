@@ -1,0 +1,36 @@
+# CUDA directory contains bin/ and lib/ directories that we need.
+CUDA_DIR := /usr/local/cuda
+
+# CUDA architecture setting.
+CUDA_ARCH := -gencode arch=compute_20,code=sm_20 \
+    -gencode arch=compute_20,code=sm_21 \
+    -gencode arch=compute_30,code=sm_30 \
+    -gencode arch=compute_35,code=sm_35
+
+# MKL directory contains include/ and lib/ directions that we need.
+MKL_DIR := /data/nwangab/composer_xe_2013_sp1.1.106/mkl
+
+# NOTE: this is required only if you will compile the matlab interface.
+# MATLAB directory should contain the mex binary in /bin
+MATLAB_DIR := /usr/local
+
+# NOTE: this is required only if you will compile the python interface.
+# We need to be able to find Python.h and numpy/arrayobject.h.
+PYTHON_INCLUDES := /usr/include/python2.7 \
+    /usr/local/lib/python2.7/dist-packages/numpy/core/include
+# We need to be able to find libpythonX.X.so or .dylib.
+PYTHON_LIB := /usr/local/lib
+
+# Whatever else you find you need goes here.
+INCLUDE_DIRS := $(PYTHON_INCLUDES) /opt/intel/mkl/include \
+	/usr/local/include /home/winsty/glog-0.3.3/src /home/winsty/leveldb-master/include
+LIBRARY_DIRS := $(PYTHON_LIB) /opt/intel/mkl/lib/intel64 /home/winsty/leveldb-master
+
+# For OS X, use clang++.
+CXX := /usr/bin/g++-4.4
+# For OS X 10.9, use libstdc++ instead of libc++ for CUDA compatibility.
+#CXXFLAGS := -stdlib=libstdc++
+
+##
+BUILD_DIR := build
+DISTRIBUTE_DIR := distribute
