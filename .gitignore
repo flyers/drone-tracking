@@ -1,0 +1,4 @@
+data/*
+experiments/perfMat/overall/*.mat
+experiments/results/*/*.mat
+experiments/tmp/*/*

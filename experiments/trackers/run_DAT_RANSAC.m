@@ -3,7 +3,7 @@ function [ results ] = run_DAT_RANSAC( seq, res_path, bSaveImage )
 project_dir = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 addpath(fullfile(project_dir, 'trackers', 'DAT', 'src'));
 
-visualization = 0;
+visualization = 1;
 use_normal_size = 1;
 normal_height = 360;
 normal_width = 640;

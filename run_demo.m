@@ -4,7 +4,7 @@ cur_dir = fileparts(mfilename('fullpath'));
 addpath(fullfile(cur_dir, 'experiments', 'trackers'));
 
 % config the dataset path
-data_path = '/home/sliay/Documents/data/uav-sequences';
+data_path = './data/DTB70';
 seq_name = 'Car2';
 data_path = fullfile(data_path, seq_name);
 img_path = fullfile(data_path, 'img');
@@ -22,5 +22,5 @@ for i = 1:size(img_list, 1)
 end
 
 % config the tracker name
-% results = run_MEEM(seq, '', false);
-results = run_MEEM_RANSAC(seq, '', false);
+results = run_DAT(seq, '', false);
+results_ransac = run_DAT_RANSAC(seq, '', false);

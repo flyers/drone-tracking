@@ -6,8 +6,7 @@ addpath(fullfile(cur_dir, 'util'));
 addpath(fullfile(cur_dir, 'rstEval'));
 addpath(fullfile(cur_dir, 'trackers'));
 
-% seqs=configUAVSeqs;
-seqs = configUAVSeqs100;
+seqs = configDTBSeqs;
 
 trackers=configTrackers;
 
