@@ -25,7 +25,7 @@ If you are using this code in a publication, please cite our paper.
 For the installation of specific trackers, please refer to the corresponding documentation.
 
 ### Download dataset
-Download the dataset from the this [link](https://www.dropbox.com/s/s1fj99s2six4lrs/DTB70.tar.gz?dl=0).
+Download the dataset from [Dropbox link](https://www.dropbox.com/s/s1fj99s2six4lrs/DTB70.tar.gz?dl=0) or [Baiduyun link](https://pan.baidu.com/s/1SftGHD7SyIFyBXExHbbYAQ).
 Put the unzipped file under the *data* directory.
 Also, change the dataset path config in file *experiments/util/configDTBSeqs.m*.
 
